@@ -2,9 +2,10 @@ const { series, parallel, src, dest } = require('gulp');
 const fs = require('fs');
 const path = require('path');
 const rename = require('gulp-rename'); 
-const uglify = require('uglify-js');
-const through2 = require('through2');
+const UglifyJS = require('gulp-uglify');
 const replace = require('gulp-replace');
+var gulpCopy = require('gulp-copy');
+const cleanCss = require('gulp-clean-css');
 
 const dir = '../resources';
 
@@ -21,12 +22,13 @@ function clean(cb) {
 
 function css() {
     return src('src/css/*')
+    .pipe(cleanCss())
     .pipe(dest(`${dir}/css`));
 }
 
 function images() {
-    return src('src/images/*')
-    .pipe(dest(`${dir}/images`));
+    return src('src/images/**/*')
+    .pipe(gulpCopy(`${dir}/images`, { prefix: 2 }))
 }
 
 function js() {
@@ -37,13 +39,15 @@ function js() {
     .pipe(dest(dir));
 }
 
-function minifyJs(a) {
+function minifyJs() {
+    return src(`${dir}/**/*.js`)
+    .pipe(UglifyJS())
+    .pipe(dest(dir));
 }
 
 function pages() {
     return src('src/pages/**/*.html')
     .pipe(rename(function(file) {
-        console.log(file);
         file.dirname = dir;
     }))
     .pipe(dest(dir));
@@ -75,7 +79,7 @@ function addTimestamp() {
 }
 
 if (process.env.NODE_ENV === 'production') {
-    exports.build = series(clean, parallel(css, images, js, pages), addTimestamp);
+    exports.build = series(clean, parallel(css, images, js, pages), parallel(minifyJs, addTimestamp));
 } else {
-    exports.build = series(clean, parallel(css, images, js, pages), addTimestamp);
+    exports.build = series(clean, parallel(css, images, js, pages));
 }

@@ -4,17 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp build",
+    "deploy": "cross-env NODE_ENV=production gulp build"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "del": "^7.1.0",
     "gulp": "^5.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-copy": "^4.0.1",
     "gulp-html-replace": "^1.6.2",
     "gulp-rename": "^2.0.0",
     "gulp-replace": "^1.1.4",
+    "gulp-uglify": "^3.0.2",
     "through2": "^4.0.2",
-    "uglify-js": "^3.17.4"
+    "uglify-js": "^3.17.4",
+    "zip-lib": "^1.0.4"
+  },
+  "dependencies": {
+    "-": "^0.0.1"
   }
 }
