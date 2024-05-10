@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>Webcam Settings</title>
+    <link href="css/sdpi.css">
+    <link href="css/rangeTooltip.css">
+    <script src="js/sdtools.common.js"></script>
+    <script src="js/rangeTooltip.js"></script>
+    <script src="WebcamSettings.js"></script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item" id="dvWebcam">
+            <div class="sdpi-item-label">Webcam</div>
+            <select class="sdpi-item-value select sdProperty sdList" id="webcams" oninput="setSettings()" sdListTextProperty="displayName" sdListValueProperty="displayName" sdValueField="webcamName"></select>
+        </div>
+        <div class="sdpi-item" id="dvWebcamProperties">
+            <div class="sdpi-item-label">Property</div>
+            <select class="sdpi-item-value select sdProperty" id="webcamProperty" oninput="setSettings()">
+                <option value="0">- Select Property -</option>
+                <option value="17">Backlight Compensation</option>
+                <option value="9">Brightness</option>
+                <option value="15">ColorEnable</option>
+                <option value="10">Contrast</option>
+                <option value="18">Gain</option>
+                <option value="14">Gamma</option>
+                <option value="5">Exposure</option>
+                <option value="7">Focus</option>
+                <option value="11">Hue</option>
+                <option value="6">Iris</option>
+                <option value="8">Low Light Compensation</option>
+                <option value="1">Pan</option>
+                <option value="19">Powerline Frequency (50/60)</option>
+                <option value="3">Roll</option>
+                <option value="12">Saturation</option>
+                <option value="13">Sharpness</option>
+                <option value="2">Tilt</option>
+                <option value="16">White Balance</option>
+                <option value="4">Zoom</option>
+            </select>
+        </div>
+        <div type="checkbox" class="sdpi-item" id="dvShowValueOnKey">
+            <div class="sdpi-item-label empty"></div>
+            <div class="sdpi-item-value">
+                <input id="showValueOnKey" class="sdProperty sdCheckbox" type="checkbox" value="" oninput="setSettings()">
+                <label for="showValueOnKey" class="sdpi-item-label"><span></span>Show value on key</label>
+            </div>
+        </div>
+        <div id="dvTextSettings" style="display:none;">
+            <div class="sdpi-item" id="dvTitlePrefix">
+                <div class="sdpi-item-label">Title Prefix</div>
+                <input class="sdpi-item-value sdProperty" placeholder="Zoom: \n" value="" id="titlePrefix" oninput="setSettings()">
+            </div>
+        </div>
+        <div type="radio" class="sdpi-item" id="dvModifySetting">
+            <div class="sdpi-item-label">Setting</div>
+            <div class="sdpi-item-value ">
+                <div class="sdpi-item-child">
+                    <input id="settingAuto" class="sdProperty sdCheckbox" type="radio" name="setting" checked oninput="setSettings()">
+                    <label for="settingAuto" class="sdpi-item-label"><span></span>Automatic</label>
+                </div>
+                <div class="sdpi-item-child">
+                    <input id="settingDefault" class="sdProperty sdCheckbox" type="radio" name="setting" checked oninput="setSettings()">
+                    <label for="settingDefault" class="sdpi-item-label"><span></span>Default</label>
+                </div>
+                <div class="sdpi-item-child">
+                    <input id="settingManualSet" class="sdProperty sdCheckbox" type="radio" name="setting" checked oninput="setSettings()">
+                    <label for="settingManualSet" class="sdpi-item-label"><span></span>Manual Set</label>
+                </div>
+                <div class="sdpi-item-child">
+                    <input id="settingManualAdjust" class="sdProperty sdCheckbox" type="radio" name="setting" oninput="setSettings()">
+                    <label for="settingManualAdjust" class="sdpi-item-label"><span></span>Manual Adjust</label>
+                </div>
+            </div>
+        </div>
+        <div id="dvSettingsManualSet" style="display:none;">
+            <div type="range" class="sdpi-item sdShowTooltip" id="dvManualSetValue">
+                <div class="sdpi-item-label" id="manualSetValueTitle">Value</div>
+                <div class="sdpi-item-value">
+                    <input type="range" min="150" max="1000" value=150 list="numbers" data-suffix="" class="sdProperty" id="manualSetValue" oninput="setSettings()">
+                    <label for="manualSetValue" class="rangeLabel" id="manualSetValueLabel"></label>
+                </div>
+            </div>
+            <div class="sdpi-item" id="dvFadeLength">
+                <div class="sdpi-item-label">Fade length (ms)</div>
+                <input class="sdpi-item-value sdProperty" id="fadeLength" inputmode="numeric" pattern="^[\d]*$" type="number" placeholder="1500" oninput="setSettings()">
+            </div>
+            <details class="message">
+                <summary>Fade allows to gradually transition to the Value. You set how long it'll take (in ms).</summary>
+            </details>
+        </div>
+        <div id="dvSettingsManualAdjust" style="display:none;">
+            <div class="sdpi-item" id="dvManualAdjust">
+                <div class="sdpi-item-label">Step</div>
+                <input class="sdpi-item-value sdProperty" id="manualAdjustStep" inputmode="numeric" pattern="^\-?[\d]*$" type="number" placeholder="-10" oninput="setSettings()">
+            </div>
+        </div>
+        <details class="message titleAlignedSmall" id="manualSetNotSupported" style="display:none;">
+            <summary>Property not supported on webcam</summary>
+        </details>
+        <div class="sdpi-info-label hidden" style="top: -1000;" value="">Tooltip</div>
+    </div>
+</body>
+</html>

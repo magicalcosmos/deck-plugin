@@ -1,0 +1,27 @@
+{  
+  "Name": "Cam Control",
+  "Icon": "resources/images/categoryIcon",
+  "Author": "Ulanzi",
+  "Description": "With the ultimate Cam Control plugin, you can control all computer camera, include virtual camera, external camera, integrated camera",
+  "PrivateAPI": true,
+  "Version": "0.1.0",
+  "Category":"Ulanzi Deck",
+  "CategoryIcon":"resources/images/categoryIcon",
+  "CodePath": "plugin-server/app.js",
+  "Type": "JavaScript",
+  "UUID": "com.ulanzi.ulanzideck.webcam",
+  "OS": [{ "Platform": "windows", "MinimumVersion": "10" }],
+  "Software": { "MinimumVersion": "5.0" },
+  "Actions": [
+    {
+      "Name": "Webcam Settings",
+      "UUID": "com.ulanzi.ulanzideck.webcam.plugin",
+      "Icon": "images/icon",
+      "PropertyInspectorPath": "resources/WebcamSettings.html",
+      "state": 0,
+      "SupportedInMultiActions": false,
+      "Tooltip": "Webcam Settings",
+      "States": [{ "Image": "resources/images/webcamAction", "TitleAlignment": "middle" }]
+    }
+  ]
+}

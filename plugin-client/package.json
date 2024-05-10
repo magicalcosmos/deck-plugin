@@ -1,0 +1,20 @@
+{
+  "name": "webcam-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "del": "^7.1.0",
+    "gulp": "^5.0.0",
+    "gulp-html-replace": "^1.6.2",
+    "gulp-rename": "^2.0.0",
+    "gulp-replace": "^1.1.4",
+    "through2": "^4.0.2",
+    "uglify-js": "^3.17.4"
+  }
+}
