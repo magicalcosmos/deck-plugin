@@ -8,19 +8,17 @@
     <title>Webcam Settings</title>
     <link rel="stylesheet" href="css/sdpi.css">
     <link rel="stylesheet" href="css/rangeTooltip.css">
-    <script src="js/sdtools.common.js"></script>
     <script src="js/rangeTooltip.js"></script>
-    <script src="WebcamSettings.js"></script>
 </head>
 <body>
     <div class="sdpi-wrapper">
         <div class="sdpi-item" id="dvWebcam">
             <div class="sdpi-item-label">Webcam</div>
-            <select class="sdpi-item-value select sdProperty sdList" id="webcams" oninput="setSettings()" sdListTextProperty="displayName" sdListValueProperty="displayName" sdValueField="webcamName"></select>
+            <select class="sdpi-item-value select sdProperty sdList" id="webcams" sdListTextProperty="displayName" sdListValueProperty="displayName" sdValueField="webcamName" onchange="handleSetSettings('webcam_name')"></select>>
         </div>
         <div class="sdpi-item" id="dvWebcamProperties">
             <div class="sdpi-item-label">Property</div>
-            <select class="sdpi-item-value select sdProperty" id="webcamProperty" oninput="setSettings()">
+            <select class="sdpi-item-value select sdProperty" id="webcamProperty" onchange="handleSetSettings('property')">
                 <option value="0">- Select Property -</option>
                 <option value="17">Backlight Compensation</option>
                 <option value="9">Brightness</option>
@@ -46,33 +44,33 @@
         <div type="checkbox" class="sdpi-item" id="dvShowValueOnKey">
             <div class="sdpi-item-label empty"></div>
             <div class="sdpi-item-value">
-                <input id="showValueOnKey" class="sdProperty sdCheckbox" type="checkbox" value="" oninput="setSettings()">
+                <input id="showValueOnKey" class="sdProperty sdCheckbox" type="checkbox" value="">
                 <label for="showValueOnKey" class="sdpi-item-label"><span></span>Show value on key</label>
             </div>
         </div>
         <div id="dvTextSettings" style="display:none;">
             <div class="sdpi-item" id="dvTitlePrefix">
                 <div class="sdpi-item-label">Title Prefix</div>
-                <input class="sdpi-item-value sdProperty" placeholder="Zoom: \n" value="" id="titlePrefix" oninput="setSettings()">
+                <input class="sdpi-item-value sdProperty" placeholder="Zoom: \n" value="" id="titlePrefix"" oninput="handleSetSettings('title_prefix')">
             </div>
         </div>
         <div type="radio" class="sdpi-item" id="dvModifySetting">
             <div class="sdpi-item-label">Setting</div>
             <div class="sdpi-item-value ">
                 <div class="sdpi-item-child">
-                    <input id="settingAuto" class="sdProperty sdCheckbox" type="radio" name="setting" checked oninput="setSettings()">
+                    <input id="settingAuto" class="sdProperty sdCheckbox" type="radio" name="setting" checked>
                     <label for="settingAuto" class="sdpi-item-label"><span></span>Automatic</label>
                 </div>
                 <div class="sdpi-item-child">
-                    <input id="settingDefault" class="sdProperty sdCheckbox" type="radio" name="setting" checked oninput="setSettings()">
+                    <input id="settingDefault" class="sdProperty sdCheckbox" type="radio" name="setting">
                     <label for="settingDefault" class="sdpi-item-label"><span></span>Default</label>
                 </div>
                 <div class="sdpi-item-child">
-                    <input id="settingManualSet" class="sdProperty sdCheckbox" type="radio" name="setting" checked oninput="setSettings()">
+                    <input id="settingManualSet" class="sdProperty sdCheckbox" type="radio" name="setting">
                     <label for="settingManualSet" class="sdpi-item-label"><span></span>Manual Set</label>
                 </div>
                 <div class="sdpi-item-child">
-                    <input id="settingManualAdjust" class="sdProperty sdCheckbox" type="radio" name="setting" oninput="setSettings()">
+                    <input id="settingManualAdjust" class="sdProperty sdCheckbox" type="radio" name="setting">
                     <label for="settingManualAdjust" class="sdpi-item-label"><span></span>Manual Adjust</label>
                 </div>
             </div>
@@ -81,13 +79,13 @@
             <div type="range" class="sdpi-item sdShowTooltip" id="dvManualSetValue">
                 <div class="sdpi-item-label" id="manualSetValueTitle">Value</div>
                 <div class="sdpi-item-value">
-                    <input type="range" min="150" max="1000" value=150 list="numbers" data-suffix="" class="sdProperty" id="manualSetValue" oninput="setSettings()">
+                    <input type="range" min="150" max="1000" value=150 list="numbers" data-suffix="" class="sdProperty" id="manualSetValue"  oninput="handleSetSettings('range')">
                     <label for="manualSetValue" class="rangeLabel" id="manualSetValueLabel"></label>
                 </div>
             </div>
             <div class="sdpi-item" id="dvFadeLength">
                 <div class="sdpi-item-label">Fade length (ms)</div>
-                <input class="sdpi-item-value sdProperty" id="fadeLength" inputmode="numeric" pattern="^[\d]*$" type="number" placeholder="1500" oninput="setSettings()">
+                <input class="sdpi-item-value sdProperty" id="fadeLength" inputmode="numeric" pattern="^[\d]*$" type="number" placeholder="1500" oninput="handleSetSettings('fade_length')">
             </div>
             <details class="message">
                 <summary>Fade allows to gradually transition to the Value. You set how long it'll take (in ms).</summary>
@@ -96,7 +94,7 @@
         <div id="dvSettingsManualAdjust" style="display:none;">
             <div class="sdpi-item" id="dvManualAdjust">
                 <div class="sdpi-item-label">Step</div>
-                <input class="sdpi-item-value sdProperty" id="manualAdjustStep" inputmode="numeric" pattern="^\-?[\d]*$" type="number" placeholder="-10" oninput="setSettings()">
+                <input class="sdpi-item-value sdProperty" id="manualAdjustStep" inputmode="numeric" pattern="^\-?[\d]*$" type="number" placeholder="-10" oninput="handleSetSettings('step')">
             </div>
         </div>
         <details class="message titleAlignedSmall" id="manualSetNotSupported" style="display:none;">
@@ -104,5 +102,207 @@
         </details>
         <div class="sdpi-info-label hidden" style="top: -1000;" value="">Tooltip</div>
     </div>
+    <script>
+        //================= global block =================
+
+        const WSURI = 'ws://localhost:3906';
+
+        const state = {
+            pluginUUID: 'com.ulanzi.ulanzideck.webcam.plugin',
+            key: null,
+            param: {
+                webcam_name: '',
+                property: '',
+                show_key_value: false,
+                title_prefix: '',
+                setting: 0,
+                range: 150,
+                fade_length: 0,
+                step: -10
+            },
+            upWS: null
+        }
+        
+        //================= websocket block =================
+
+        /**
+         * 连接上位机WebSocket
+         */
+        function startUpWebSocket() {
+            state.upWS = new WebSocket(WSURI);
+            state.upWS.onopen = function() {
+                const data = {
+                    code: 0,
+                    cmd: 'connected',
+                    uuid: state.pluginUUID,
+                };
+                state.upWS.send(JSON.stringify(data));
+            };
+            state.upWS.onmessage = function(msg) {
+                const data = JSON.parse(msg.data);
+                const { cmd, uuid, key, param = {} } = data;
+                let json;
+                switch (cmd) {
+                case 'add':
+                    json = {
+                        code: 0,
+                        cmd: 'add',
+                        uuid: state.pluginUUID,
+                        key: state.key,
+                    };
+
+                    state.upWS.send(JSON.stringify(json));
+                    break;
+                case 'paramfromapp':
+                    state.key = key;
+                    state.param = param;
+                    resetSettings();
+                    json = {
+                        code: 0,
+                        cmd: 'paramfromapp',
+                        uuid: state.pluginUUID,
+                        key: state.key,
+                        param: state.param,
+                    };
+                    sate.upWS.send(JSON.stringify(json));
+                    break;
+                }
+            };
+            state.upWS.onclose = function(evt) {
+                const reason = WEBSOCKETERROR(evt);
+                console.warn('[STREAMDECK]***** WEBOCKET CLOSED **** reason:', reason);
+            };
+        }
+
+
+        /**
+         * 向上位机发送数据
+         * @param param 数据
+         */
+        function upWSSend(param) {
+            const params = { 
+                uuid: state.pluginUUID,
+                cmd: 'paramfromplugin', 
+                key: state.key,
+                param: Object.assign(state.param, param)
+            };
+            state.upWS.send(JSON.stringify(params));
+        }
+
+        startUpWebSocket();
+
+        //================= business block =================
+
+        const dvTextSettingsEl = document.getElementById('dvTextSettings');
+        const dvSettingsManualSetEl = document.getElementById('dvSettingsManualSet');
+        const dvSettingsManualAdjustEl = document.getElementById('dvSettingsManualAdjust');
+        const manualSetNotSupportedEl = document.getElementById('manualSetNotSupported');
+
+        function hideAll() {
+            [
+                dvTextSettingsEl, 
+                dvSettingsManualSetEl, 
+                dvSettingsManualAdjustEl, 
+                manualSetNotSupportedEl
+            ].forEach(el =>  el.style.display = 'none');
+        }
+
+        function handleSetSettings(property) {
+            const param = {};
+            const value = event.currentTarget.value;
+            param[property] = value;
+            upWSSend(param);
+        }
+
+        /**
+         * 显示已填写的值
+         * @param el 元素
+         * @param isShow 是否显示
+         */
+        function resetSettings() {
+            document.getElementById('webcams').value = state.param.webcam_name;
+            document.getElementById('webcamProperty').value = state.param.property;
+            document.getElementById('titlePrefix').value = state.param.title_prefix;
+            document.getElementById('manualSetValue').value = state.param.range;
+            document.getElementById('fadeLength').value = state.param.fade_length;
+            document.getElementById('manualAdjustStep').value = state.param.step;
+            document.getElementById('showValueOnKey').checked = state.param.show_key_value;
+            dvTextSettingsEl.style.display = state.param.show_key_value ? 'block' : 'none';
+            document.getElementById(state.param.setting).checked = true;
+            showOtherOption(state.param.setting);
+        }
+
+        /**
+         * value checked
+         */
+        function handleShowValueOnKey() {
+            document.getElementById('showValueOnKey').addEventListener('click', function(evt) {
+                const display = dvTextSettingsEl.style.display;
+                const isDisplay = display === 'block' || display === '';
+                upWSSend({
+                    show_key_value: !isDisplay
+                });
+   
+                dvTextSettingsEl.style.display = isDisplay ? 'none' : 'block';
+            }, false);
+        }
+
+        /**
+         * dom元素显示
+         * @param el 元素
+         * @param isShow 是否显示
+         */
+        function showDom(el, isShow) {
+            el.style.display = isShow ? 'block' : 'none';
+        }
+
+        /**
+         * 配置选项显示
+         * @param showManualSet
+         * @param showManualAdjust
+         * @param showNotSupported
+         */
+        function showInputOptions(showManualSet, showManualAdjust, showNotSupported) {
+            showDom(dvSettingsManualSetEl, showManualSet);
+            showDom(dvSettingsManualAdjustEl, showManualAdjust);
+            showDom(manualSetNotSupportedEl, showNotSupported);
+        }
+        
+        /**
+         * 配置选项显示
+         * @param showManualSet
+         * @param showManualAdjust
+         * @param showNotSupported
+         */
+        function showOtherOption(id) {
+            switch(id) {
+                case 'settingManualSet':
+                    showInputOptions(true, false, false);
+                    break;
+                case 'settingManualAdjust':
+                    showInputOptions(false, true, false);
+                    break;
+                default:
+                    showInputOptions(false, false, false);
+            }
+        }
+        /**
+         * 配置选择
+         */
+        function handleSettingsSelection() {
+            const allSettings = document.querySelectorAll('input[name="setting"]');
+            allSettings.forEach((el) => {
+                el.addEventListener('click', function(evt) { 
+                    const setting = evt.currentTarget.id;
+                    upWSSend({ setting });
+                    showOtherOption(setting);
+                }, false);
+            });
+        }
+        
+        hideAll();
+        handleShowValueOnKey();
+        handleSettingsSelection();
+    </script>
 </body>
 </html>

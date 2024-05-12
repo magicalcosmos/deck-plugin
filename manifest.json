@@ -16,12 +16,12 @@
     {
       "Name": "Webcam Settings",
       "UUID": "com.ulanzi.ulanzideck.webcam.plugin",
-      "Icon": "resources/images/webcamActioncon",
+      "Icon": "resources/images/webcamAction",
       "PropertyInspectorPath": "resources/WebcamSettings.html",
       "state": 0,
       "SupportedInMultiActions": false,
       "Tooltip": "Webcam Settings",
-      "States": [{ "Image": "images/webcamAction", "TitleAlignment": "middle" }]
+      "States": [{ "Image": "resources/images/webcamAction", "TitleAlignment": "middle" }]
     }
   ]
 }
